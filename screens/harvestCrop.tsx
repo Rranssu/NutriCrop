@@ -27,22 +27,13 @@ const HarvestCrop: React.FC<HarvestCropProps> = ({ onCancel }) => {
             </View>
             <View style={styles.headerTextContainer}>
               <Text style={styles.headerTitle}>Harvest Crop</Text>
-              <Text style={styles.headerSub}>Configure the crop</Text>
+              <Text style={styles.headerSub}>Configure the activity</Text>
             </View>
           </View>
 
           {/* Form Body */}
           <View style={styles.formBody}>
             
-            {/* Crop Selector */}
-            <View style={styles.inputGroup}>
-              <Text style={styles.label}>Crop</Text>
-              <TouchableOpacity style={styles.inputContainer} activeOpacity={0.7}>
-                <Text style={styles.placeholderText}>Select Existing Crop</Text>
-                <Ionicons name="arrow-down" size={20} color="#666" />
-              </TouchableOpacity>
-            </View>
-
             {/* Expected Harvest Input */}
             <View style={styles.inputGroup}>
               <Text style={styles.label}>Expected Harvest</Text>
@@ -79,7 +70,7 @@ const HarvestCrop: React.FC<HarvestCropProps> = ({ onCancel }) => {
 
             {/* Action Buttons */}
             <TouchableOpacity style={styles.harvestBtn} activeOpacity={0.8}>
-              <Text style={styles.harvestBtnText}>Harvest Crop</Text>
+              <Text style={styles.harvestBtnText}>Harvest Crop Now</Text>
             </TouchableOpacity>
 
             <TouchableOpacity 

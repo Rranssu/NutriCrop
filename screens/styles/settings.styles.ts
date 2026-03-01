@@ -3,66 +3,85 @@ import { StyleSheet } from 'react-native';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FAF8ED',
+    backgroundColor: '#F1F5F9', // Slightly cooler grey-blue background
   },
   content: {
     paddingHorizontal: 20,
     paddingTop: 20,
-    paddingBottom: 30,
+    paddingBottom: 40,
   },
-  // Setting Section Card
-  card: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 25,
-    padding: 20,
-    marginBottom: 20,
-    elevation: 3,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+  sectionContainer: {
+    marginBottom: 25,
   },
   sectionTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 15,
+    fontSize: 12,
+    fontWeight: '800',
+    color: '#64748B',
+    marginBottom: 10,
+    letterSpacing: 0.5,
+    paddingLeft: 5,
   },
-  // Setting Items (Beige rows)
-  settingItem: {
-    backgroundColor: '#F9F4E8', // Light beige tint
-    paddingVertical: 18,
-    paddingHorizontal: 20,
-    borderRadius: 20,
-    marginBottom: 12,
-  },
-  settingText: {
-    fontSize: 16,
-    color: '#333',
-    fontWeight: '500',
-  },
-  // Logout Button Section
-  logoutCard: {
+  card: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 25,
-    padding: 15,
-    elevation: 3,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  logoutButton: {
-    backgroundColor: '#C0503D', // Reddish-orange color from screenshot
-    height: 60,
     borderRadius: 20,
+    overflow: 'hidden',
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
+  },
+  item: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 15,
+    paddingHorizontal: 15,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: '#F1F5F9',
+    marginHorizontal: 15,
+  },
+  iconBox: {
+    width: 40,
+    height: 40,
+    borderRadius: 10,
+    backgroundColor: '#F0FDF4', // Very light green tint
     justifyContent: 'center',
     alignItems: 'center',
+    marginRight: 15,
   },
-  logoutButtonText: {
-    color: '#FFFFFF',
-    fontSize: 18,
+  textContainer: {
+    flex: 1,
+  },
+  itemLabel: {
+    fontSize: 14,
     fontWeight: 'bold',
+    color: '#334155',
+  },
+  itemValue: {
+    fontSize: 12,
+    color: '#64748B',
+    marginTop: 2,
+  },
+  rightIcon: {
+    marginLeft: 10,
+  },
+  // Logout Button
+  logoutButton: {
+    backgroundColor: '#FEF2F2', // Light pinkish-red
+    flexDirection: 'row',
+    height: 55,
+    borderRadius: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  logoutText: {
+    color: '#DC2626', // Deep red
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginLeft: 10,
   },
 });
 

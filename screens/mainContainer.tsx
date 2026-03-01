@@ -11,6 +11,7 @@ import AddActivity from './addActivity';
 import PlantCrop from './plantCrop'; 
 import ApplyPesticide from './applyPesticide';
 import HarvestCrop from './harvestCrop';
+import ApplyFertilizer from './applyFertilizer'; // 1. Import Fertilizer Screen
 import Messages from './messages'; 
 import Profile from './profile';
 import FarmMap from './map';
@@ -18,16 +19,17 @@ import Forum from './forum';
 import History from './history';
 import SubsidyTracker from './subsidy';
 import Notifications from './notifications';
-import Settings from './settings'; // 1. Import Settings Screen
+import Settings from './settings';
 
 const MainContainer = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   
-  // 2. Updated type to include 'Settings'
   const [activeTab, setActiveTab] = useState<TabName | 'Forum' | 'History' | 'Subsidy' | 'Notifications' | 'Settings'>('Home');
   
   const [activeSidebarItem, setActiveSidebarItem] = useState('Dashboard');
-  const [recordView, setRecordView] = useState<'list' | 'add' | 'plant' | 'pesticide' | 'harvest'>('list');
+  
+  // 2. Updated state to include 'fertilizer' view
+  const [recordView, setRecordView] = useState<'list' | 'add' | 'plant' | 'pesticide' | 'harvest' | 'fertilizer'>('list');
 
   const getHeaderInfo = () => {
     switch (activeTab) {
@@ -39,14 +41,15 @@ const MainContainer = () => {
       case 'History': return { title: 'Farm History', sub: 'Track your agricultural activities' };
       case 'Subsidy': return { title: 'Subsidy Tracker', sub: 'Manage and track government assistance' };
       case 'Notifications': return { title: 'Notifications', sub: 'Stay updated with alerts' };
-      
-      case 'Settings': 
-        // 3. Header for Settings
-        return { title: 'Account Settings', sub: 'Manage your account' };
+      case 'Settings': return { title: 'Account Settings', sub: 'Manage your account' };
 
       case 'Record': 
-        if (recordView === 'list') return { title: 'Details', sub: 'Review current state' };
-        if (recordView === 'plant') return { title: 'Add Crop', sub: 'Plant a new crop' };
+        if (recordView === 'list') return { title: 'Crop Monitoring', sub: 'Farm Overview' };
+        if (recordView === 'plant') return { title: 'Plant New Crop', sub: 'Record your planting activity and details.' };
+        // Fertilizer uses the "Add Activity" header style from your screenshots
+        if (recordView === 'add' || recordView === 'fertilizer' || recordView === 'pesticide' || recordView === 'harvest') {
+          return { title: 'Activity Menu', sub: '' };
+        }
         return { title: 'Add Activity', sub: 'Select an activity' };
       default: return { title: 'NutriCrop', sub: '' };
     }
@@ -56,7 +59,7 @@ const MainContainer = () => {
 
   return (
     <View style={styles.container}>
-      {/* Integrated Top Bar */}
+      {/* Top Navigation Bar */}
       <TopBar 
         title={header.title} 
         subtitle={header.sub} 
@@ -75,31 +78,54 @@ const MainContainer = () => {
         {activeTab === 'History' && <History />}
         {activeTab === 'Subsidy' && <SubsidyTracker />}
         {activeTab === 'Notifications' && <Notifications />}
-        
-        {/* 4. Render Settings Screen */}
         {activeTab === 'Settings' && <Settings />}
         
         {/* Record Navigation Flow */}
         {activeTab === 'Record' && (
           <>
-            {recordView === 'list' && <Records onAddPress={() => setRecordView('add')} />}
-            {recordView === 'add' && (
-                <AddActivity 
-                    onPlantPress={() => setRecordView('plant')} 
-                    onPesticidePress={() => setRecordView('pesticide')}
-                    onHarvestPress={() => setRecordView('harvest')}
+            {/* 1. Main List of Active Crops */}
+            {recordView === 'list' && (
+                <Records 
+                    onCropPress={() => setRecordView('add')}    
+                    onAddPress={() => setRecordView('plant')}   
                 />
             )}
-            {recordView === 'plant' && <PlantCrop onCancel={() => setRecordView('add')} />}
-            {recordView === 'pesticide' && <ApplyPesticide onCancel={() => setRecordView('add')} />}
-            {recordView === 'harvest' && <HarvestCrop onCancel={() => setRecordView('add')} />}
+
+            {/* 2. The Vertical Activity Menu */}
+            {recordView === 'add' && (
+                <AddActivity 
+                    onBack={() => setRecordView('list')}
+                    onPesticidePress={() => setRecordView('pesticide')}
+                    onHarvestPress={() => setRecordView('harvest')}
+                    onFertilizerPress={() => setRecordView('fertilizer')} // 3. Linked Fertilizer
+                />
+            )}
+
+            {/* 3. The Plant New Crop Form */}
+            {recordView === 'plant' && (
+                <PlantCrop onCancel={() => setRecordView('list')} />
+            )}
+
+            {/* 4. Pesticide Application Form */}
+            {recordView === 'pesticide' && (
+                <ApplyPesticide onCancel={() => setRecordView('add')} />
+            )}
+
+            {/* 5. Harvest Crop Form */}
+            {recordView === 'harvest' && (
+                <HarvestCrop onCancel={() => setRecordView('add')} />
+            )}
+
+            {/* 6. Fertilizer Application Form */}
+            {recordView === 'fertilizer' && (
+                <ApplyFertilizer onCancel={() => setRecordView('add')} />
+            )}
           </>
         )}
       </View>
 
       {/* Bottom Navigation */}
       <BottomBar 
-        // Reset Bottom Bar highlight to 'Home' if we are on a sidebar-only screen
         activeTab={['Forum', 'History', 'Subsidy', 'Notifications', 'Settings'].includes(activeTab) ? 'Home' : activeTab as TabName} 
         onTabPress={(tab) => {
           setActiveTab(tab);
@@ -115,20 +141,18 @@ const MainContainer = () => {
         onNavigate={(item) => {
             setActiveSidebarItem(item);
             
-            // 5. Unified Navigation Logic for Sidebar
             if (item === 'Dashboard') setActiveTab('Home');
             if (item === 'Messages') setActiveTab('Messages');
             if (item === 'Profile') setActiveTab('Profile');
-            if (item === 'Crop Monitoring') setActiveTab('Record');
+            if (item === 'Crop Monitoring') {
+                setActiveTab('Record');
+                setRecordView('list');
+            }
             if (item === 'Forum') setActiveTab('Forum');
             if (item === 'History') setActiveTab('History');
             if (item === 'Subsidy Records') setActiveTab('Subsidy');
             if (item === 'Announcements') setActiveTab('Notifications');
-            
-            // 6. Linked Settings in Sidebar
-            if (item === 'Settings') {
-                setActiveTab('Settings');
-            }
+            if (item === 'Settings') setActiveTab('Settings');
         }}
       />
     </View>

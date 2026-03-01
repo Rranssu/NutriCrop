@@ -1,50 +1,82 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { View, Text, TouchableOpacity, ScrollView, SafeAreaView } from 'react-native';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import styles from './styles/addActivity.styles';
 
 interface AddActivityProps {
-  onPlantPress: () => void;
+  onBack: () => void;
   onPesticidePress: () => void;
-  onHarvestPress: () => void; // Added the Harvest prop
+  onFertilizerPress: () => void;
+  onHarvestPress: () => void;
 }
 
 const AddActivity: React.FC<AddActivityProps> = ({ 
-  onPlantPress, 
+  onBack,
   onPesticidePress, 
+  onFertilizerPress,
   onHarvestPress 
 }) => {
-  const activities = [
-    { id: '1', title: 'Plant Crop', icon: 'calendar-outline' },
-    { id: '2', title: 'Apply Fertilizer', icon: 'leaf-outline' },
-    { id: '3', title: 'Apply Pesticide', icon: 'water-outline' },
-    { id: '4', title: 'Harvest Crop', icon: 'calendar-outline' },
-  ];
 
   return (
-    <View style={styles.container}>
-      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        {activities.map((item) => (
-          <TouchableOpacity 
-            key={item.id} 
-            style={styles.card} 
-            activeOpacity={0.8}
-            onPress={() => {
-              if (item.title === 'Plant Crop') onPlantPress();
-              if (item.title === 'Apply Pesticide') onPesticidePress();
-              if (item.title === 'Harvest Crop') onHarvestPress(); // Link to Harvest
-              
-              // We can add 'Apply Fertilizer' here once we build its screen
-            }}
-          >
-            <View style={styles.iconContainer}>
-              <Ionicons name={item.icon as any} size={60} color="white" />
+    <SafeAreaView style={styles.container}>
+      {/* Top Header */}
+      <View style={styles.header}>
+        <TouchableOpacity onPress={onBack}>
+          <Ionicons name="arrow-back" size={24} color="#4E7D42" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>ACTIVITY MENU</Text>
+      </View>
+
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        
+        {/* Action Buttons */}
+        <TouchableOpacity style={styles.card} activeOpacity={0.7} onPress={onPesticidePress}>
+          <View style={styles.iconCircle}>
+            <MaterialCommunityIcons name="flask-outline" size={24} color="#4E7D42" />
+          </View>
+          <Text style={styles.cardText}>Apply Pesticide</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.card} activeOpacity={0.7} onPress={onFertilizerPress}>
+          <View style={styles.iconCircle}>
+            <MaterialCommunityIcons name="tools" size={24} color="#4E7D42" />
+          </View>
+          <Text style={styles.cardText}>Apply Fertilizer</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.card} activeOpacity={0.7} onPress={onHarvestPress}>
+          <View style={styles.iconCircle}>
+            <MaterialCommunityIcons name="basket-outline" size={24} color="#4E7D42" />
+          </View>
+          <Text style={styles.cardText}>Harvest Crop</Text>
+        </TouchableOpacity>
+
+        {/* Recent Activity Section */}
+        <Text style={styles.sectionLabel}>RECENT RICE ACTIVITY</Text>
+        
+        <TouchableOpacity style={styles.recentItem}>
+          <View style={styles.recentInfo}>
+            <View style={styles.recentIconBox}>
+              <Ionicons name="leaf-outline" size={20} color="#4E7D42" />
             </View>
-            <Text style={styles.cardText}>{item.title}</Text>
-          </TouchableOpacity>
-        ))}
+            <View>
+              <Text style={styles.recentTitle}>Applied Fertilizer (Rice)</Text>
+              <Text style={styles.recentDate}>Feb 10, 2024</Text>
+            </View>
+          </View>
+          <Ionicons name="chevron-forward" size={18} color="#CCC" />
+        </TouchableOpacity>
+
+        {/* Info Box */}
+        <View style={styles.infoBox}>
+          <Ionicons name="information-circle-outline" size={20} color="#666" />
+          <Text style={styles.infoText}>
+            Now viewing activities for Rice. To manage another crop, please go back to the monitoring list.
+          </Text>
+        </View>
+
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 };
 

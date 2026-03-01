@@ -1,92 +1,110 @@
 import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity, SafeAreaView } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import styles from './styles/records.styles';
 
-// IMPORTANT: No curly braces here!
-import styles from './styles/records.styles'; 
-
-// Added the prop interface to handle the transition
+// Updated Interface with two specific navigation props
 interface RecordsProps {
-  onAddPress: () => void;
+  onCropPress: () => void;   // Navigate to AddActivity (Menu)
+  onAddPress: () => void;    // Navigate to PlantCrop (Form)
 }
 
-const Records: React.FC<RecordsProps> = ({ onAddPress }) => {
+const Records: React.FC<RecordsProps> = ({ onCropPress, onAddPress }) => {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
         
-        {/* Crop Summary Card */}
-        <View style={styles.cropCard}>
-          <View style={styles.iconBox}>
-             <Ionicons name="leaf-outline" size={35} color="#4E7D42" />
-          </View>
-          <View>
-            <Text style={styles.cropTitle}>Rice</Text>
-            <Text style={styles.cropSubtitle}>NSIC Rc222</Text>
-            <Text style={styles.cropMeta}>Plot: A-12    •    2.0 ha</Text>
-          </View>
-          <View style={styles.statusBadge}>
-            <Text style={styles.statusText}>Healthy</Text>
-          </View>
-        </View>
+        <Text style={styles.headerTitle}>Active Crops</Text>
 
-        {/* Primary Action Button - Linked to Add Activity */}
-        <TouchableOpacity 
-          style={styles.mainActionBtn} 
-          activeOpacity={0.8}
-          onPress={onAddPress}
-        >
-          <Text style={styles.mainActionBtnText}>Add Activity</Text>
-        </TouchableOpacity>
-
-        <Text style={styles.sectionTitle}>Activities</Text>
-
-        {/* Timeline Activities */}
-        <ActivityItem 
-          icon="calendar-outline" 
-          label="Crop Planted" 
-          date="Jan 15, 2026" 
-          days="23 days ago" 
+        {/* Rice Card - Tapping this goes to Activity Menu */}
+        <CropCard 
+          name="Rice"
+          variety="NSIC Rc222"
+          status="HEALTHY"
+          progress={65}
+          planted="Oct 12"
+          area="2.5 Hectares"
+          icon="leaf"
+          themeColor="#4E7D42"
+          iconBg="#EEF5ED"
+          statusBg="#E6F4EA"
+          onPress={onCropPress} 
         />
-        <ActivityItem 
-          icon="leaf-outline" 
-          label="Apply Fertilizer" 
-          date="Jan 26, 2026" 
-          days="11 days ago" 
-        />
-        <ActivityItem 
-          icon="leaf-outline" 
-          label="Apply Pesticide" 
-          date="Feb 2, 2026" 
-          days="5 days ago" 
+
+        {/* Corn Card - Tapping this goes to Activity Menu */}
+        <CropCard 
+          name="Corn"
+          variety="Pioneer 30T60"
+          status="WARNING"
+          progress={30}
+          planted="Nov 05"
+          area="1.2 Hectares"
+          icon="corn"
+          isMaterial={true}
+          themeColor="#D68100"
+          iconBg="#FFF4E5"
+          statusBg="#FFF4E5"
+          onPress={onCropPress}
         />
 
       </ScrollView>
 
-      {/* Floating Action Button (+) - Linked to Add Activity */}
+      {/* Floating Action Button - Tapping this goes to Plant New Crop Form */}
       <TouchableOpacity 
         style={styles.fab} 
         activeOpacity={0.9}
-        onPress={onAddPress}
+        onPress={onAddPress} 
       >
-        <Ionicons name="add" size={35} color="white" />
+        <Ionicons name="add" size={40} color="white" />
       </TouchableOpacity>
     </SafeAreaView>
   );
 };
 
-// Helper Component for Activity Rows
-const ActivityItem = ({ icon, label, date, days }: any) => (
-  <TouchableOpacity style={styles.activityCard} activeOpacity={0.7}>
-    <View style={styles.activityIconCircle}>
-       <Ionicons name={icon} size={24} color="#4E7D42" />
+// Updated Sub-component to accept the onPress prop
+const CropCard = ({ 
+  name, variety, status, progress, planted, area, icon, themeColor, iconBg, statusBg, isMaterial, onPress 
+}: any) => (
+  <TouchableOpacity style={styles.card} activeOpacity={0.8} onPress={onPress}>
+    {/* Top Row: Icon, Title, Status */}
+    <View style={styles.cardTopRow}>
+      <View style={[styles.iconBox, { backgroundColor: iconBg }]}>
+        {isMaterial ? (
+          <MaterialCommunityIcons name={icon} size={32} color={themeColor} />
+        ) : (
+          <Ionicons name={icon} size={32} color={themeColor} />
+        )}
+      </View>
+      <View style={styles.titleContainer}>
+        <Text style={styles.cropName}>{name}</Text>
+        <Text style={styles.varietyText}>Variety: {variety}</Text>
+      </View>
+      <View style={[styles.statusBadge, { backgroundColor: statusBg }]}>
+        <Text style={[styles.statusText, { color: themeColor }]}>{status}</Text>
+      </View>
     </View>
-    <View style={styles.activityInfo}>
-      <Text style={styles.activityLabel}>{label}</Text>
+
+    {/* Middle Row: Growth Progress */}
+    <View style={styles.progressSection}>
+      <View style={styles.progressLabelRow}>
+        <Text style={styles.progressLabel}>Growth Progress</Text>
+        <Text style={styles.progressPercentage}>{progress}%</Text>
+      </View>
+      <View style={styles.progressTrack}>
+        <View style={[styles.progressBar, { width: `${progress}%`, backgroundColor: themeColor }]} />
+      </View>
     </View>
-    <View style={styles.dateContainer}>
-      <Text style={styles.activityDate}>{date}</Text>
-      <Text style={styles.daysAgo}>{days}</Text>
+
+    {/* Bottom Row: Metadata */}
+    <View style={styles.cardFooter}>
+      <View style={styles.footerItem}>
+        <Ionicons name="calendar-outline" size={16} color="#999" />
+        <Text style={styles.footerText}>Planted: {planted}</Text>
+      </View>
+      <View style={styles.footerItem}>
+        <Ionicons name="resize-outline" size={16} color="#999" />
+        <Text style={styles.footerText}>{area}</Text>
+      </View>
     </View>
   </TouchableOpacity>
 );

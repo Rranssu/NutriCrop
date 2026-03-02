@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { 
   View, 
   Text, 
@@ -10,6 +10,7 @@ import {
   Dimensions
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Added
 import styles from './styles/sidebar.styles';
 
 const { width } = Dimensions.get('window');
@@ -23,11 +24,28 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, activeItem, onNavigate }) => {
+  const [userName, setUserName] = useState('Farmer');
   const slideAnim = useRef(new Animated.Value(-DRAWER_WIDTH)).current;
   const opacityAnim = useRef(new Animated.Value(0)).current;
 
+  // 1. Fetch User Data from AsyncStorage when Sidebar opens
   useEffect(() => {
+    const loadUserData = async () => {
+      try {
+        const jsonValue = await AsyncStorage.getItem('userData');
+        if (jsonValue != null) {
+          const user = JSON.parse(jsonValue);
+          // 'firstname' and 'lastname' match your Sequelize migration
+          setUserName(`${user.firstname} ${user.lastname}`);
+        }
+      } catch (e) {
+        console.error("Error loading user in Sidebar:", e);
+      }
+    };
+
     if (isOpen) {
+      loadUserData();
+      // Slide In & Fade In Overlay
       Animated.parallel([
         Animated.timing(slideAnim, {
           toValue: 0,
@@ -35,7 +53,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, activeItem, onNaviga
           useNativeDriver: true,
         }),
         Animated.timing(opacityAnim, {
-          toValue: 0.5, // Dim level
+          toValue: 0.5,
           duration: 300,
           useNativeDriver: true,
         })
@@ -77,26 +95,29 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, activeItem, onNaviga
       transparent={true}
       visible={isOpen}
       onRequestClose={handleClose}
-      animationType="none" // Controlled by our manual Animated values
+      animationType="none"
     >
       <View style={{ flex: 1 }}>
+        {/* Dimmed Background Overlay */}
         <TouchableWithoutFeedback onPress={handleClose}>
           <Animated.View style={[styles.overlay, { opacity: opacityAnim }]} />
         </TouchableWithoutFeedback>
 
+        {/* Sliding Drawer Container */}
         <Animated.View 
           style={[
             styles.drawer, 
             { transform: [{ translateX: slideAnim }] }
           ]}
         >
+          {/* Header Section - DYNAMIC DATA */}
           <View style={styles.header}>
             <View style={styles.profileRow}>
               <View style={styles.profileCircle}>
                 <Ionicons name="person" size={35} color="white" />
               </View>
-              <View>
-                <Text style={styles.userName}>Juan dela Cruz</Text>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.userName} numberOfLines={1}>{userName}</Text>
                 <Text style={styles.userRole}>Farmer</Text>
               </View>
             </View>
@@ -105,6 +126,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, activeItem, onNaviga
             </TouchableOpacity>
           </View>
 
+          {/* Menu Items List */}
           <ScrollView style={styles.menuList} showsVerticalScrollIndicator={false}>
             {menuItems.map((item) => {
               const isActive = activeItem === item.name;
@@ -130,6 +152,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, activeItem, onNaviga
             })}
           </ScrollView>
 
+          {/* Footer */}
           <View style={styles.footer}>
             <Text style={styles.footerText}>NutriCrop v1.0.0</Text>
             <Text style={styles.footerText}>© 2026 Agriculture Platform</Text>

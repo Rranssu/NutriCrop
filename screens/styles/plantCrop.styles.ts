@@ -53,10 +53,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     justifyContent: 'center',
   },
-  // Style for the disabled Amount field
   disabledInput: {
-    backgroundColor: '#F5F5F5',
-    borderColor: '#EEEEEE',
+    backgroundColor: '#F0F0F0',
+    borderColor: '#E0E0E0',
   },
   inputText: {
     fontSize: 15,
@@ -74,12 +73,13 @@ const styles = StyleSheet.create({
   },
   submitBtn: {
     backgroundColor: '#558249',
-    height: 55,
+    height: 60,
     borderRadius: 15,
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 10,
     marginBottom: 12,
+    elevation: 2,
   },
   submitBtnText: {
     color: '#FFF',
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
   },
   cancelBtn: {
     backgroundColor: '#9E9791',
-    height: 55,
+    height: 60,
     borderRadius: 15,
     justifyContent: 'center',
     alignItems: 'center',
